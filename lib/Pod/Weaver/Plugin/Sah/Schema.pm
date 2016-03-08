@@ -78,8 +78,9 @@ sub weave_section {
     if ($filename =~ m!^lib/(.+)\.pm$!) {
         $package = $1;
         $package =~ s!/!::!g;
-        next unless $package =~ /^Sah::Schema::/;
-        $self->_process_module($document, $input, $package);
+        if ($package =~ /^Sah::Schema::/) {
+            $self->_process_module($document, $input, $package);
+        }
     }
 }
 
