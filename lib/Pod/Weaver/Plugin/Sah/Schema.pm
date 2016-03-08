@@ -26,32 +26,44 @@ sub _process_module {
         require $package_pm;
     }
 
-    my $res = gen_pod_from_acme_cpanlists(
-        module => $package,
-        _raw=>1,
-    );
+    my $schemas = \%{"$package\::SCHEMAS"};
 
-    $self->add_text_to_section(
-        $document, $res->{author_lists}, 'AUTHOR LISTS',
-        {after_section => ['DESCRIPTION']},
-    ) if $res->{author_lists};
+    # add POD section: SAH SCHEMAS
+    {
+        require Data::Sah::Normalize;
+        require Markdown::To::POD;
+        my @pod;
+        push @pod, "=over\n\n";
+        for my $name (sort keys %$schemas) {
+            $self->log_debug(["Normalizing schema '%s'", $name]);
+            my $sch = Data::Sah::Normalize::normalize_schema($schemas->{$name});
+            push @pod, "=item * $name\n\n";
+            push @pod, "$sch->[1]{summary}.\n\n" if $sch->[1]{summary};
+            if ($sch->[1]{description}) {
+                my $pod = Markdown::To::POD::markdown_to_pod(
+                    $sch->[1]{description});
+                push @pod, $pod, "\n\n";
+            }
+        }
+        push @pod, "=back\n\n";
+        $self->add_text_to_section(
+            $document, join("", @pod), 'SAH SCHEMAS',
+            {after_section => ['DESCRIPTION']},
+        );
+    }
 
-    $self->add_text_to_section(
-        $document, $res->{module_lists}, 'MODULE LISTS',
-        {after_section => ['AUTHOR LISTS', 'DESCRIPTION']},
-    ) if $res->{module_lists};
-
-    # XXX don't add if current See Also already mentions it
-    my @pod = (
-        "L<Acme::CPANLists> - about the Acme::CPANLists namespace\n\n",
-        "L<acme-cpanlists> - CLI tool to let you browse/view the lists\n\n",
-    );
-    $self->add_text_to_section(
-        $document, join('', @pod), 'SEE ALSO',
-        {after_section => ['DESCRIPTION']
-     },
-    );
-
+    # add POD section: SEE ALSO
+    {
+        # XXX don't add if current See Also already mentions it
+        my @pod = (
+            "L<Sah> - specification\n\n",
+            "L<Data::Sah>\n\n",
+        );
+        $self->add_text_to_section(
+            $document, join('', @pod), 'SEE ALSO',
+            {after_section => ['DESCRIPTION']},
+        );
+    }
     $self->log(["Generated POD for '%s'", $filename]);
 }
 
