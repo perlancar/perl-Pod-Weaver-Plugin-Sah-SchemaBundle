@@ -28,6 +28,8 @@ sub _process_module {
 
     my $schemas = \%{"$package\::SCHEMAS"};
 
+    return unless keys %$schemas;
+
     # add POD section: SAH SCHEMAS
     {
         require Data::Sah::Normalize;
@@ -76,6 +78,7 @@ sub weave_section {
     if ($filename =~ m!^lib/(.+)\.pm$!) {
         $package = $1;
         $package =~ s!/!::!g;
+        next unless $package =~ /^Sah::Schema::/;
         $self->_process_module($document, $input, $package);
     }
 }
