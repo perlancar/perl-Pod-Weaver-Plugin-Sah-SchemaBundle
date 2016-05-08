@@ -1,4 +1,10 @@
-Revision history for Pod-Weaver-Plugin-Sah-Schema
+Revision history for Pod-Weaver-Plugin-Sah-Schemas
+
+0.04    2016-05-08 (PERLANCAR) (unreleased)
+
+        - [Incompatible change] Rename dist from
+          Pod-Weaver-Plugin-Sah-Schema{,s}.
+
 
 0.03    2016-03-08 (PERLANCAR)
 
