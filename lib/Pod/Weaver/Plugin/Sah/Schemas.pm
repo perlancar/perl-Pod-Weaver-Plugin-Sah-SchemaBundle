@@ -58,7 +58,10 @@ sub weave_section {
                 for my $name (sort keys %schemas) {
                     my $sch = $schemas{$name};
                     push @pod, "=item * L<$name|Sah::Schema::$name>\n\n";
-                    push @pod, "$sch->[1]{summary}.\n\n" if $sch->[1]{summary};
+                    if (defined $sch->[1]{summary}) {
+                        require String::PodQuote;
+                        push @pod, String::PodQuote::pod_quote($sch->[1]{summary}), ".\n\n";
+                    }
                     if ($sch->[1]{description}) {
                         my $pod = Markdown::To::POD::markdown_to_pod(
                             $sch->[1]{description});
