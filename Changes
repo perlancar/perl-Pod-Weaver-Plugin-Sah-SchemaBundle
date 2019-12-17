@@ -1,3 +1,8 @@
+0.05    2019-12-17  Released-By: PERLANCAR; Urgency: medium
+
+	- Use String::PodQuote to quote summary when added into POD.
+
+
 0.04    2016-05-08  Released-By: PERLANCAR
 
         - [Incompatible change] Rename dist from
