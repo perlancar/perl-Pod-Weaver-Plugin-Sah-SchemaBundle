@@ -1,6 +1,8 @@
 package Pod::Weaver::Plugin::Sah::Schemas;
 
+# AUTHORITY
 # DATE
+# DIST
 # VERSION
 
 use 5.010001;
@@ -97,6 +99,39 @@ sub weave_section {
                 require $package_pm;
             }
             my $sch = ${"$package\::schema"};
+
+            # add POD section: Synopsis
+            {
+                my @pod;
+
+                # examples
+                {
+                    require Data::Dmp;
+                    my $egs = $sch->[1]{examples};
+                    last unless $egs && @$egs;
+                    push @pod, "Sample data:\n\n";
+                    for my $eg (@$egs) {
+                        # XXX if dump is too long, use Data::Dump instead
+                        push @pod, " ", Data::Dmp::dmp($eg->{data});
+                        if ($eg->{valid}) {
+                            push @pod, "  # valid";
+                            push @pod, ", becomes ",
+                                Data::Dmp::dmp($eg->{res})
+                                  if exists $eg->{res};
+                        } else {
+                            push @pod, "  # INVALID";
+                            push @pod, " ($eg->{summary})"
+                                if defined $eg->{summary};
+                        }
+                        push @pod, "\n\n";
+                    } # for eg
+                } # examples
+
+                $self->add_text_to_section(
+                    $document, join("", @pod), 'SYNOPSIS',
+                    {ignore => 1},
+                );
+            }
 
             # add POD section: DESCRIPTION
             {
