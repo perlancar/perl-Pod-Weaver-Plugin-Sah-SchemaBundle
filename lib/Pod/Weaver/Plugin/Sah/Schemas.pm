@@ -92,7 +92,8 @@ sub weave_section {
 
             $self->log(["Generated POD for '%s'", $filename]);
 
-        } elsif ($package =~ /^Sah::Schema::/) {
+        } elsif ($package =~ /^Sah::Schema::(.+)/) {
+            my $sch_name = $1;
 
             {
                 local @INC = ("lib", @INC);
@@ -104,7 +105,44 @@ sub weave_section {
             {
                 my @pod;
 
-                # examples
+                # example on how to use
+                {
+                    push @pod, "Using with L<Data::Sah>:\n\n";
+                    push @pod, <<"_";
+ use Data::Sah qw(gen_validator);
+ my \$vdr = gen_validator("$sch_name*");
+ say \$vdr->(\$data) ? "valid" : "INVALID!";
+
+ # Data::Sah can also create a validator to return error message, coerced value,
+ # even validators in other languages like JavaScript, from the same schema.
+ # See its documentation for more details.
+
+_
+
+                    push @pod, "Using in L<Rinci> function metadata (to be used in L<Perinci::CmdLine>, etc):\n\n";
+                    push @pod, <<"_";
+ package MyApp;
+ our \%SPEC;
+ \$SPEC{myfunc} = {
+     v => 1.1,
+     summary => 'Routine to do blah ...',
+     args => {
+         arg1 => {
+             summary => 'The blah blah argument',
+             schema => ['$sch_name*'],
+         },
+         ...
+     },
+ };
+ sub myfunc {
+     my \%args = \@_;
+     ...
+ }
+
+_
+                }
+
+                # sample data
                 {
                     require Data::Dmp;
                     my $egs = $sch->[1]{examples};
