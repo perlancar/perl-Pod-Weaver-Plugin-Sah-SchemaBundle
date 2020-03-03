@@ -119,7 +119,7 @@ sub weave_section {
 
 _
 
-                    push @pod, "Using in L<Rinci> function metadata (to be used in L<Perinci::CmdLine>, etc):\n\n";
+                    push @pod, "Using in L<Rinci> function metadata (to be used with L<Perinci::CmdLine>, etc):\n\n";
                     push @pod, <<"_";
  package MyApp;
  our \%SPEC;
