@@ -150,12 +150,21 @@ _
                     push @pod, "Sample data:\n\n";
                     for my $eg (@$egs) {
                         # XXX if dump is too long, use Data::Dump instead
-                        push @pod, " ", Data::Dmp::dmp($eg->{data});
+                        my $value = exists $eg->{value} ? $eg->{value} :
+                            $eg->{data};
+                        push @pod, " ", Data::Dmp::dmp($value);
                         if ($eg->{valid}) {
                             push @pod, "  # valid";
-                            push @pod, ", becomes ",
-                                Data::Dmp::dmp($eg->{res})
-                                  if exists $eg->{res};
+                            my $has_validated_value;
+                            my $validated_value;
+                            if (exists $eg->{validated_value}) {
+                                $has_validated_value++; $validated_value = $eg->{validated_value};
+                            } elsif (exists $eg->{res}) {
+                                $has_validated_value++; $validated_value = $eg->{res};
+                            }
+                            if ($has_validated_value) {
+                                push @pod, ", becomes ", Data::Dmp::dmp($validated_value);
+                            }
                         } else {
                             push @pod, "  # INVALID";
                             push @pod, " ($eg->{summary})"
