@@ -40,7 +40,7 @@ sub weave_section {
                 {
                     local @INC = ("lib");
                     $res = Module::List::list_modules(
-                        "Sah::Schema::", {list_modules=>1});
+                        "Sah::Schema::", {recurse=>1, list_modules=>1});
                 }
                 for my $mod (keys %$res) {
                     my $schema_name = $mod; $schema_name =~ s/^Sah::Schema:://;
