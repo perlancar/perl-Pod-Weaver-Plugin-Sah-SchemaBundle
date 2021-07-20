@@ -56,6 +56,8 @@ sub weave_section {
                 last unless keys %schemas;
                 require Markdown::To::POD;
                 my @pod;
+                push @pod, "The following schemas are included in this distribution:\n\n";
+
                 push @pod, "=over\n\n";
                 for my $name (sort keys %schemas) {
                     my $sch = $schemas{$name};
