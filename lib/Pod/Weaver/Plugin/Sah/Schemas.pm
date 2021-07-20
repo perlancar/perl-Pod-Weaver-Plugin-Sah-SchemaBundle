@@ -181,6 +181,9 @@ _
                     last unless $egs && @$egs;
                     push @pod, "Sample data:\n\n";
                     for my $eg (@$egs) {
+                        # normalize non-defhash example
+                        $eg = {value=>$eg, valid=>1} if ref $eg ne 'HASH';
+
                         # XXX if dump is too long, use Data::Dump instead
                         my $value = exists $eg->{value} ? $eg->{value} :
                             $eg->{data};
