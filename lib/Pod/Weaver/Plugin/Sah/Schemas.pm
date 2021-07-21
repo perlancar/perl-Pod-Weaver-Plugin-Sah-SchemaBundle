@@ -83,8 +83,8 @@ sub weave_section {
             {
                 # XXX don't add if current See Also already mentions it
                 my @pod = (
-                    "L<Sah> - specification\n\n",
-                    "L<Data::Sah>\n\n",
+                    "L<Sah> - schema specification\n\n",
+                    "L<Data::Sah> - Perl implementation of Sah\n\n",
                 );
                 $self->add_text_to_section(
                     $document, join('', @pod), 'SEE ALSO',
