@@ -160,7 +160,7 @@ L<Perinci::CmdLine> to create a CLI:
  package
    main;
  use Perinci::CmdLine::Any;
- Perinci::CmdLine::Any->new(url=>'MyApp::myfunc')->run;
+ Perinci::CmdLine::Any->new(url=>'/MyApp/myfunc')->run;
 
  # in command-line
  % ./myapp.pl --help
