@@ -1,3 +1,10 @@
+0.067   2021-07-22  Released-By: PERLANCAR; Urgency: medium
+
+	- Fix typo in generated example.
+
+	- Tweak wording in generated mention.
+
+
 0.066   2021-07-20  Released-By: PERLANCAR; Urgency: medium
 
 	- [bugfix] Non-defhash example was not handled correctly (results
