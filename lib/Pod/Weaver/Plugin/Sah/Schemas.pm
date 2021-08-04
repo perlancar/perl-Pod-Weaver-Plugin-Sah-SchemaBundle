@@ -107,9 +107,46 @@ sub weave_section {
             {
                 my @pod;
 
+                # sample data & validation results
+                {
+                    require Data::Dmp;
+                    my $egs = $sch->[1]{examples};
+                    last unless $egs && @$egs;
+                    push @pod, "=head2 Sample data and validation results against this schema\n\n";
+                    for my $eg (@$egs) {
+                        # normalize non-defhash example
+                        $eg = {value=>$eg, valid=>1} if ref $eg ne 'HASH';
+
+                        # XXX if dump is too long, use Data::Dump instead
+                        my $value = exists $eg->{value} ? $eg->{value} :
+                            $eg->{data};
+                        push @pod, " ", Data::Dmp::dmp($value);
+                        if ($eg->{valid}) {
+                            push @pod, "  # valid";
+                            my $has_validated_value;
+                            my $validated_value;
+                            if (exists $eg->{validated_value}) {
+                                $has_validated_value++; $validated_value = $eg->{validated_value};
+                            } elsif (exists $eg->{res}) {
+                                $has_validated_value++; $validated_value = $eg->{res};
+                            }
+                            if ($has_validated_value) {
+                                push @pod, ", becomes ", Data::Dmp::dmp($validated_value);
+                            }
+                        } else {
+                            push @pod, "  # INVALID";
+                            push @pod, " ($eg->{summary})"
+                                if defined $eg->{summary};
+                        }
+                        push @pod, "\n\n";
+                    } # for eg
+                } # examples
+
                 # example on how to use
                 {
                     push @pod, <<"_";
+=head2 Using with Data::Sah
+
 To check data against this schema (requires L<Data::Sah>):
 
  use Data::Sah qw(gen_validator);
@@ -120,6 +157,8 @@ To check data against this schema (requires L<Data::Sah>):
  # and/or coerced value. Data::Sah can even create validator that targets other
  # language, like JavaScript. All from the same schema. See its documentation
  # for more details.
+
+=head2 Using with Params::Sah
 
 To validate function parameters against this schema (requires L<Params::Sah>):
 
@@ -132,8 +171,10 @@ To validate function parameters against this schema (requires L<Params::Sah>):
      ...
  }
 
+=head2 Using with Perinci::CmdLine::Lite
+
 To specify schema in L<Rinci> function metadata and use the metadata with
-L<Perinci::CmdLine> to create a CLI:
+L<Perinci::CmdLine> (L<Perinci::CmdLine::Lite>) to create a CLI:
 
  # in lib/MyApp.pm
  package
@@ -173,41 +214,6 @@ L<Perinci::CmdLine> to create a CLI:
 
 _
                 }
-
-                # sample data
-                {
-                    require Data::Dmp;
-                    my $egs = $sch->[1]{examples};
-                    last unless $egs && @$egs;
-                    push @pod, "Sample data:\n\n";
-                    for my $eg (@$egs) {
-                        # normalize non-defhash example
-                        $eg = {value=>$eg, valid=>1} if ref $eg ne 'HASH';
-
-                        # XXX if dump is too long, use Data::Dump instead
-                        my $value = exists $eg->{value} ? $eg->{value} :
-                            $eg->{data};
-                        push @pod, " ", Data::Dmp::dmp($value);
-                        if ($eg->{valid}) {
-                            push @pod, "  # valid";
-                            my $has_validated_value;
-                            my $validated_value;
-                            if (exists $eg->{validated_value}) {
-                                $has_validated_value++; $validated_value = $eg->{validated_value};
-                            } elsif (exists $eg->{res}) {
-                                $has_validated_value++; $validated_value = $eg->{res};
-                            }
-                            if ($has_validated_value) {
-                                push @pod, ", becomes ", Data::Dmp::dmp($validated_value);
-                            }
-                        } else {
-                            push @pod, "  # INVALID";
-                            push @pod, " ($eg->{summary})"
-                                if defined $eg->{summary};
-                        }
-                        push @pod, "\n\n";
-                    } # for eg
-                } # examples
 
                 $self->add_text_to_section(
                     $document, join("", @pod), 'SYNOPSIS',
