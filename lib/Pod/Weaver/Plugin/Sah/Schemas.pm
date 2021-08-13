@@ -160,7 +160,7 @@ To check data against this schema (requires L<Data::Sah>):
  my \$validator = gen_validator("$sch_name*");
  say \$validator->(\$data) ? "valid" : "INVALID!";
 
-The above schema returns a boolean value (true if data is valid, false if
+The above schema returns a boolean result (true if data is valid, false if
 otherwise). To return an error message string instead (empty string if data is
 valid, a non-empty error message otherwise):
 
@@ -208,7 +208,7 @@ _
 
                     push @pod, <<"_";
 
-Data::Sah can also create validator that returns a hash of detaild error
+Data::Sah can also create validator that returns a hash of detailed error
 message. Data::Sah can even create validator that targets other language, like
 JavaScript, from the same schema. Other things Data::Sah can do: show source
 code for validator, generate a validator code with debug comments and/or log
