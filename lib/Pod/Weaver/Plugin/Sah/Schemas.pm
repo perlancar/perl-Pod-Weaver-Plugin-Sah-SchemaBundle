@@ -1,14 +1,14 @@
 package Pod::Weaver::Plugin::Sah::Schemas;
 
-# AUTHORITY
-# DATE
-# DIST
-# VERSION
-
 use 5.010001;
 use Moose;
 with 'Pod::Weaver::Role::AddTextToSection';
 with 'Pod::Weaver::Role::Section';
+
+# AUTHORITY
+# DATE
+# DIST
+# VERSION
 
 sub weave_section {
     no strict 'refs';
@@ -123,6 +123,9 @@ sub weave_section {
                         push @pod, " ", Data::Dmp::dmp($value);
                         if ($eg->{valid}) {
                             push @pod, "  # valid";
+                            push @pod, " ($eg->{summary})"
+                                if defined $eg->{summary};
+
                             my $has_validated_value;
                             my $validated_value;
                             if (exists $eg->{validated_value}) {
