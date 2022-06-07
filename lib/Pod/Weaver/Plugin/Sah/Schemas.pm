@@ -11,7 +11,7 @@ with 'Pod::Weaver::Role::Section';
 # VERSION
 
 sub weave_section {
-    no strict 'refs';
+    no strict 'refs'; ## no critic: TestingAndDebugging::ProhibitNoStrict
 
     my ($self, $document, $input) = @_;
 
