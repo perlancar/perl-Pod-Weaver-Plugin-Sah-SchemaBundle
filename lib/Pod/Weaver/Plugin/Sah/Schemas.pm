@@ -273,6 +273,27 @@ L<Perinci::CmdLine> (L<Perinci::CmdLine::Lite>) to create a CLI:
  % ./myapp.pl --arg1 ...
 
 _
+                    (my $type_name = $sch_name) =~ s/(\A\w)|(::|_)(\w)/defined($3) ? uc($3) : uc($1)/eg;
+
+                    push @pod, <<"_";
+
+=head2 Using with Type::Tiny
+
+To create a type constraint and type library from a schema:
+
+ package My::Types {
+     use Type::Library -base;
+     use Type::FromSah qw( sah2type );
+
+     __PACKAGE__->add_type(
+         sah2type('\$sch_name*', name=>'$type_name')
+     );
+ }
+
+ use My::Types qw($type_name);
+ $type_name->assert_valid(\$data);
+
+_
                 }
 
                 $self->add_text_to_section(
