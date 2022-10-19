@@ -317,6 +317,24 @@ _
 
             $self->log(["Generated POD for '%s'", $filename]);
 
+            # add POD section: SEE ALSO
+            {
+                my $links = $sch->[1]{links};
+                next unless $links && @$links;
+
+                my @pod;
+
+                require String::PodQuote;
+                for my $link (@$links) {
+                    my $url = $link->{url}; s/^(prog|pm)://;
+                    push @pod, "L<$url>", ($link->{summary} ? " - ".String::PodQuote::pod_quote($link->{summary}) : ""), "\n\n";
+                }
+                $self->add_text_to_section(
+                    $document, join('', @pod), 'SEE ALSO',
+                    {after_section => ['DESCRIPTION']},
+                );
+            }
+
         } # Sah::Schema::*
     }
 }
