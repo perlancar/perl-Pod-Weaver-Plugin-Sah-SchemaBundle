@@ -326,7 +326,7 @@ _
 
                 require String::PodQuote;
                 for my $link (@$links) {
-                    my $url = $link->{url}; s/^(prog|pm)://;
+                    my $url = $link->{url}; $url =~ s/^(prog|pm)://;
                     push @pod, "L<$url>", ($link->{summary} ? " - ".String::PodQuote::pod_quote($link->{summary}) : ""), "\n\n";
                 }
                 $self->add_text_to_section(
