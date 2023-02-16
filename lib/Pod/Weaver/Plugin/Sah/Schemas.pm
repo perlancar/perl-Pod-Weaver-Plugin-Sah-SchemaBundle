@@ -286,7 +286,7 @@ To create a type constraint and type library from a schema:
      use Type::FromSah qw( sah2type );
 
      __PACKAGE__->add_type(
-         sah2type('\$sch_name*', name=>'$type_name')
+         sah2type('$sch_name*', name=>'$type_name')
      );
  }
 
