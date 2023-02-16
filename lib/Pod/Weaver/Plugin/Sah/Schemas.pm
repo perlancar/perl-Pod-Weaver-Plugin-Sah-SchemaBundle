@@ -272,6 +272,18 @@ L<Perinci::CmdLine> (L<Perinci::CmdLine::Lite>) to create a CLI:
 
  % ./myapp.pl --arg1 ...
 
+=head2 Using on the CLI with validate-with-sah
+
+To validate some data on the CLI, you can use L<validate-with-sah> utility.
+Specify the schema as the first argument (encoded in Perl syntax) and the data
+to validate as the second argument (encoded in Perl syntax):
+
+ % validate-with-sah '"$sch_name*"' '"data..."'
+
+C<validate-with-sah> has several options for, e.g. validating multiple data,
+showing the generated validator code (Perl/JavaScript/etc), or loading
+schema/data from file. See its manpage for more details.
+
 _
                     (my $type_name = $sch_name) =~ s/(\A\w)|(::|_)(\w)/defined($3) ? uc($3) : uc($1)/eg;
 
