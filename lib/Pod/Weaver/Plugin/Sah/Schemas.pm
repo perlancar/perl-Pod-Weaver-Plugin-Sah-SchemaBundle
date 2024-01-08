@@ -5,7 +5,7 @@ use Moose;
 with 'Pod::Weaver::Role::AddTextToSection';
 with 'Pod::Weaver::Role::Section';
 
-has show_source => (is=>'rw');
+has show_source => (is=>'rw', default=>sub {1});
 has include_schema_module => (is=>'rw');
 has exclude_schema_module => (is=>'rw');
 has include_schemas_module => (is=>'rw');
@@ -471,7 +471,7 @@ It does the following to L<lib/Sah/Schema/*> .pm files:
 
 =head2 show_source
 
-Bool. Default false. If set to true, will add a C<SAH SCHEMA DEFINITION> section
+Bool. Default true. If set to true, will add a C<SAH SCHEMA DEFINITION> section
 containing the source (dump) of the schema. Examples will be stripped.
 
 =head2 include_schema_module
