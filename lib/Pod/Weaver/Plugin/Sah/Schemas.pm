@@ -172,7 +172,7 @@ sub weave_section {
                     push @pod, "Used completion: ";
                     for my $i (0 .. $#{$xcompletions}) {
                         my $cname = ref $xcompletions->[$i] ? $xcompletions->[$i][0] : $xcompletions->[$i];
-                        push @pod, ", " if $i; push @pod, "L<$cname|Perinci::Sub::XComplete::$cname>" }
+                        push @pod, ", " if $i; push @pod, "L<$cname|Perinci::Sub::XCompletion::$cname>" }
                     push @pod, "\n\n";
                 }
 
