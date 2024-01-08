@@ -5,6 +5,17 @@ use Moose;
 with 'Pod::Weaver::Role::AddTextToSection';
 with 'Pod::Weaver::Role::Section';
 
+has show_source => (is=>'rw');
+has include_schema_module => (is=>'rw');
+has exclude_schema_module => (is=>'rw');
+has include_schemas_module => (is=>'rw');
+has exclude_schemas_module => (is=>'rw');
+
+sub mvp_multivalue_args { qw(
+                                include_schema_module exclude_schema_module
+                                include_schemas_module exclude_schemas_module
+                        ) }
+
 # AUTHORITY
 # DATE
 # DIST
@@ -27,6 +38,13 @@ sub weave_section {
         $package_pm .= ".pm";
 
         if ($package =~ /^Sah::Schemas::/) {
+
+            if ($self->include_schemas_module && @{ $self->include_schemas_module }) {
+                do { $self->log_debug(["Skipping module %s (not in include_schmeas_module)", $package]); return } unless grep {$_ eq $package || "Sah::Schemas::$_" eq $package} @{ $self->include_schemas_module };
+            }
+            if ($self->exclude_schemas_module && @{ $self->exclude_schemas_module }) {
+                do { $self->log_debug(["Skipping module %s (in exclude_schmeas_module)", $package]);     return } if     grep {$_ eq $package || "Sah::Schemas::$_" eq $package} @{ $self->exclude_schemas_module };
+            }
 
             {
                 local @INC = ("lib", @INC);
@@ -102,6 +120,58 @@ sub weave_section {
                 require $package_pm;
             }
             my $sch = ${"$package\::schema"};
+
+            if ($self->include_schema_module && @{ $self->include_schema_module }) {
+                do { $self->log_debug(["Skipping module %s (not in include_schmea_module)", $package]); return } unless grep {$_ eq $package || "Sah::Schema::$_" eq $package} @{ $self->include_schema_module };
+            }
+            if ($self->exclude_schema_module && @{ $self->exclude_schema_module }) {
+                do { $self->log_debug(["Skipping module %s (in exclude_schmea_module)", $package]);     return } if     grep {$_ eq $package || "Sah::Schema::$_" eq $package} @{ $self->exclude_schema_module };
+            }
+
+            # add POD section: SAH SCHEMA DEFINITION
+            {
+                last unless $self->show_source;
+
+                require Data::Clone;
+                require Data::Dump;
+
+                my @pod;
+                my $sch = Data::Clone::clone($sch);
+                delete $sch->[1]{description};
+                delete $sch->[1]{examples};
+
+                my $dump = Data::Dump::dump($sch);
+                $dump =~ s/^/ /mg;
+                push @pod, $dump, "\n\n";
+
+                # link to prefilters modules
+                my $prefilters = $sch->[1]{prefilters};
+                if ($prefilters && @$prefilters) {
+                    push @pod, "Used prefilters: ";
+                    for my $i (0 .. $#{$prefilters}) {
+                        my $fname = ref $prefilters->[$i] ? $prefilters->[$i][0] : $prefilters->[$i];
+                        push @pod, ", " if $i; push @pod, "L<$fname|Data::Sah::Filter::perl::$fname>" }
+                    push @pod, "\n\n";
+                }
+
+                # TODO: link to perl coercion rule modules
+                # TODO: link to js coercion rule modules
+
+                # link to completion modules
+                my $xcompletions = $sch->[1]{'x.completion'};
+                if ($xcompletions && @$xcompletions) {
+                    push @pod, "Used completion: ";
+                    for my $i (0 .. $#{$xcompletions}) {
+                        my $cname = ref $xcompletions->[$i] ? $xcompletions->[$i][0] : $xcompletions->[$i];
+                        push @pod, ", " if $i; push @pod, "L<$cname|Perinci::Sub::XComplete::$cname>" }
+                    push @pod, "\n\n";
+                }
+
+                $self->add_text_to_section(
+                    $document, join("", @pod), 'SAH SCHEMA DEFINITION',
+                    {ignore => 1},
+                );
+            } # add POD section: SAH SCHEMA DEFINITION
 
             # add POD section: Synopsis
             {
@@ -386,6 +456,34 @@ It does the following to L<lib/Sah/Schema/*> .pm files:
 =item * Add "DESCRIPTION" POD section schema's description
 
 =back
+
+
+=head1 CONFIGURATION
+
+=head2 show_source
+
+Bool. Default false. If set to true, will add a C<SAH SCHEMA DEFINITION> section
+containing the source (dump) of the schema. Examples will be stripped.
+
+=head2 include_schema_module
+
+Filter only certain scenario modules that get processed. Can be specified
+multiple times. The C<Sah::Schema::> prefix can be omitted.
+
+=head2 exclude_schema_module
+
+Exclude certain scenario modules from being processed. Can be specified multiple
+times. The C<Sah::Schems::> prefix can be omitted.
+
+=head2 include_schemas_module
+
+Filter only certain scenario modules that get processed. Can be specified
+multiple times. The C<Sah::Schemas::> prefix can be omitted.
+
+=head2 exclude_schemas_module
+
+Exclude certain scenario modules from being processed. Can be specified multiple
+times. The C<Sah::Schemas::> prefix can be omitted.
 
 
 =head1 SEE ALSO
