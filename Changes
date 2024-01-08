@@ -1,3 +1,8 @@
+0.078   2024-01-08  Released-By: PERLANCAR; Backward-Incompatible: yes; Urgency: medium
+
+        - [incompatible change] Default show_source configuration to true.
+
+
 0.077   2024-01-08  Released-By: PERLANCAR; Urgency: medium
 
         - [bugfix] Fix generated completion module name.
