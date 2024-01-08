@@ -134,6 +134,7 @@ sub weave_section {
 
                 require Data::Clone;
                 require Data::Dump;
+                require Data::Sah::Util::Type;
 
                 my @pod;
                 my $sch = Data::Clone::clone($sch);
@@ -143,6 +144,14 @@ sub weave_section {
                 my $dump = Data::Dump::dump($sch);
                 $dump =~ s/^/ /mg;
                 push @pod, $dump, "\n\n";
+
+                # link to base schema/type
+                my $type = Data::Sah::Util::Type::get_type($sch);
+                if (Data::Sah::Util::Type::is_type($type)) {
+                    push @pod, "Base type: L<$type|Data::Sah::Type::$type>\n\n";
+                } else {
+                    push @pod, "Base schema: L<$type|Sah::Schema::$type>\n\n";
+                }
 
                 # link to prefilters modules
                 my $prefilters = $sch->[1]{prefilters};
