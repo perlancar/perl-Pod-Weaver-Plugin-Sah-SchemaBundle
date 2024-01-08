@@ -425,7 +425,7 @@ _
 1;
 # ABSTRACT: Plugin to use when building Sah::Schemas::* distribution
 
-=for Pod::Coverage weave_section
+=for Pod::Coverage ^(weave_section|mvp_multivalue_args)$
 
 =head1 SYNOPSIS
 
