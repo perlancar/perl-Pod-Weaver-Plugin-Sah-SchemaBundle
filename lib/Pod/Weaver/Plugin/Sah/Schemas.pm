@@ -133,17 +133,26 @@ sub weave_section {
                 last unless $self->show_source;
 
                 require Data::Clone;
-                require Data::Dump;
+                require Data::Dump::SortKeys;
                 require Data::Sah::Util::Type;
+                require Sort::Sub;
+                require Sort::Sub::sah_schema_clause; # for scan_prereqs
 
                 my @pod;
                 my $sch = Data::Clone::clone($sch);
                 delete $sch->[1]{description};
                 delete $sch->[1]{examples};
 
-                my $dump = Data::Dump::dump($sch);
-                $dump =~ s/^/ /mg;
-                push @pod, $dump, "\n\n";
+                {
+                    my $sorter = Sort::Sub::get_sorter("sah_schema_clause");
+                    local $Data::Dump::SortKeys::SORT_KEYS = sub {
+                        my $hash = shift;
+                        sort { $sorter->($a,$b) } keys %$hash;
+                    };
+                    my $dump = Data::Dump::SortKeys::dump($sch);
+                    $dump =~ s/^/ /mg;
+                    push @pod, $dump, "\n\n";
+                }
 
                 # link to base schema/type
                 my $type = Data::Sah::Util::Type::get_type($sch);
