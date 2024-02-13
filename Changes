@@ -1,3 +1,8 @@
+0.080   2024-02-13  Released-By: PERLANCAR; Urgency: medium
+
+        - Rename module/dist Pod-Weaver-Plugin-Sah-Schema{s,Bundle}.
+
+
 0.079   2024-01-12  Released-By: PERLANCAR; Urgency: medium
 
         - [ux] In generated SAH SCHEMA DEFINITION section, sort schema clauses
