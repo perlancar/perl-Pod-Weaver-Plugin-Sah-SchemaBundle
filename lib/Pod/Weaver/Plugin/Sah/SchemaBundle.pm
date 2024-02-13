@@ -1,4 +1,4 @@
-package Pod::Weaver::Plugin::Sah::Schemas;
+package Pod::Weaver::Plugin::Sah::SchemaBundle;
 
 use 5.010001;
 use Moose;
@@ -8,12 +8,12 @@ with 'Pod::Weaver::Role::Section';
 has show_source => (is=>'rw', default=>sub {1});
 has include_schema_module => (is=>'rw');
 has exclude_schema_module => (is=>'rw');
-has include_schemas_module => (is=>'rw');
-has exclude_schemas_module => (is=>'rw');
+has include_schemabundle_module => (is=>'rw');
+has exclude_schemabundle_module => (is=>'rw');
 
 sub mvp_multivalue_args { qw(
                                 include_schema_module exclude_schema_module
-                                include_schemas_module exclude_schemas_module
+                                include_schemabundle_module exclude_schemabundle_module
                         ) }
 
 # AUTHORITY
@@ -37,13 +37,13 @@ sub weave_section {
         $package_pm =~ s!::!/!g;
         $package_pm .= ".pm";
 
-        if ($package =~ /^Sah::Schemas::/) {
+        if ($package =~ /^Sah::SchemaBundle::/) {
 
-            if ($self->include_schemas_module && @{ $self->include_schemas_module }) {
-                do { $self->log_debug(["Skipping module %s (not in include_schmeas_module)", $package]); return } unless grep {$_ eq $package || "Sah::Schemas::$_" eq $package} @{ $self->include_schemas_module };
+            if ($self->include_schemabundle_module && @{ $self->include_schemabundle_module }) {
+                do { $self->log_debug(["Skipping module %s (not in include_schemabundle_module)", $package]); return } unless grep {$_ eq $package || "Sah::SchemaBundle::$_" eq $package} @{ $self->include_schemabundle_module };
             }
-            if ($self->exclude_schemas_module && @{ $self->exclude_schemas_module }) {
-                do { $self->log_debug(["Skipping module %s (in exclude_schmeas_module)", $package]);     return } if     grep {$_ eq $package || "Sah::Schemas::$_" eq $package} @{ $self->exclude_schemas_module };
+            if ($self->exclude_schemabundle_module && @{ $self->exclude_schemabundle_module }) {
+                do { $self->log_debug(["Skipping module %s (in exclude_schemabundle_module)", $package]);     return } if     grep {$_ eq $package || "Sah::SchemaBundle::$_" eq $package} @{ $self->exclude_schemabundle_module };
             }
 
             {
@@ -441,7 +441,7 @@ _
 }
 
 1;
-# ABSTRACT: Plugin to use when building Sah::Schemas::* distribution
+# ABSTRACT: Plugin to use when building Sah::SchemaBundle::* distribution
 
 =for Pod::Coverage ^(weave_section|mvp_multivalue_args)$
 
@@ -449,13 +449,13 @@ _
 
 In your F<weaver.ini>:
 
- [-Sah::Schemas]
+ [-Sah::SchemaBundle]
 
 
 =head1 DESCRIPTION
 
-This plugin is used when building a Sah::Schemas::* distribution. It currently
-does the following to F<lib/Sah/Schemas/*> .pm files:
+This plugin is used when building a Sah::SchemaBundle::* distribution. It
+currently does the following to F<lib/Sah/SchemaBundle/*> .pm files:
 
 =over
 
@@ -493,19 +493,19 @@ multiple times. The C<Sah::Schema::> prefix can be omitted.
 Exclude certain scenario modules from being processed. Can be specified multiple
 times. The C<Sah::Schems::> prefix can be omitted.
 
-=head2 include_schemas_module
+=head2 include_schemabundle_module
 
 Filter only certain scenario modules that get processed. Can be specified
-multiple times. The C<Sah::Schemas::> prefix can be omitted.
+multiple times. The C<Sah::SchemaBundle::> prefix can be omitted.
 
-=head2 exclude_schemas_module
+=head2 exclude_schemabundle_module
 
 Exclude certain scenario modules from being processed. Can be specified multiple
-times. The C<Sah::Schemas::> prefix can be omitted.
+times. The C<Sah::SchemaBundle::> prefix can be omitted.
 
 
 =head1 SEE ALSO
 
 L<Sah> and L<Data::Sah>
 
-L<Dist::Zilla::Plugin::Sah::Schemas>
+L<Dist::Zilla::Plugin::Sah::SchemaBundle>
