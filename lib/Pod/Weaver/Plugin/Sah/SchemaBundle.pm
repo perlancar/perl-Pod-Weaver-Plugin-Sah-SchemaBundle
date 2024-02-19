@@ -177,10 +177,11 @@ sub weave_section {
 
                 # link to completion modules
                 my $xcompletions = $sch->[1]{'x.completion'};
-                if ($xcompletions && @$xcompletions) {
+                if ($xcompletions) {
+                    $xcompletions = [$xcompletions] unless ref $xcompletions eq 'ARRAY';
                     push @pod, "Used completion: ";
                     for my $i (0 .. $#{$xcompletions}) {
-                        my $cname = ref $xcompletions->[$i] ? $xcompletions->[$i][0] : $xcompletions->[$i];
+                        my $cname = ref $xcompletions->[$i] eq 'ARRAY' ? $xcompletions->[$i][0] : $xcompletions->[$i];
                         push @pod, ", " if $i; push @pod, "L<$cname|Perinci::Sub::XCompletion::$cname>" }
                     push @pod, "\n\n";
                 }
