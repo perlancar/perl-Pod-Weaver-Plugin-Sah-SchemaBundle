@@ -1,3 +1,9 @@
+0.082   2024-02-23  Released-By: PERLANCAR; Urgency: medium
+
+        - [ux] In generated SAH SCHEMA DEFINITION section, also remove the
+          'summary' clause.
+
+
 0.081   2024-02-19  Released-By: PERLANCAR; Urgency: medium
 
         - [bugfix] Didn't handle non-array form of x.completions.
