@@ -140,6 +140,7 @@ sub weave_section {
 
                 my @pod;
                 my $sch = Data::Clone::clone($sch);
+                delete $sch->[1]{summary};
                 delete $sch->[1]{description};
                 delete $sch->[1]{examples};
 
